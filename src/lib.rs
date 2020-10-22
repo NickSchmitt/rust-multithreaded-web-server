@@ -8,7 +8,17 @@ pub struct ThreadPool{
     sender: mpsc::Sender<Job>,
 }
 
-type Job = Box<FnOnce() + Send + 'static>;
+trait FnBox {
+    fn call_box(self: Box<Self>);
+}
+
+impl<F: FnOnce()> FnBox for F {
+    fn call_box(self:Box<F>){
+        (*self)()
+    }
+}
+
+type Job = Box<FnBox() + Send + 'static>;
 impl ThreadPool {
     // Create a new threadpool
     // 
@@ -57,7 +67,7 @@ impl Worker {
                 let job = receiver.lock().unwrap().recv().unwrap();
 
                 println!("Worker {} got a job; executing.", id);
-                (*job)();
+                job.call_box();
             }
         });
 
