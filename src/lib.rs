@@ -23,13 +23,9 @@ impl<F: FnOnce()> FnBox for F {
 type Job = Box<FnBox + Send + 'static>;
 impl ThreadPool {
     // Create a new threadpool
-    // 
     // The size is the number of threads in the pool
-    // 
     // #Panics
-    // 
     // The `new` function will panic if size is zero
-
     pub fn new(size:usize) -> ThreadPool {
         assert!(size > 0);
 
@@ -47,7 +43,6 @@ impl ThreadPool {
             sender,
         }
     }
-
     pub fn execute<F>(&self, f: F) 
         where 
             F: FnOnce() + Send + 'static 
@@ -78,12 +73,8 @@ impl Worker {
                         break;
                     },
                 }
-
-                
-                
             }
         });
-
         Worker {
             id,
             thread: Some(thread),
@@ -94,7 +85,6 @@ impl Worker {
 impl Drop for ThreadPool {
     fn drop(&mut self){
         println!("Sending terminate message to all workers.");
-        
         for _ in &mut self.workers {
             self.sender.send(Message::Terminate).unwrap();
         }
