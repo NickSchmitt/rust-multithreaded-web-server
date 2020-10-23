@@ -1,4 +1,4 @@
-### Building A Multi-Threaded Web Server In Rust
+# Building A Multi-Threaded Web Server In Rust
 
 To solidify my understanding of Rust, I built this multithreaded web server from *The Rust Programming Language* by Steve Klabnik and Carol Nichols.
 
