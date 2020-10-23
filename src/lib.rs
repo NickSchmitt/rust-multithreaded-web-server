@@ -28,13 +28,9 @@ impl ThreadPool {
     // The `new` function will panic if size is zero
     pub fn new(size:usize) -> ThreadPool {
         assert!(size > 0);
-
         let (sender, receiver) = mpsc::channel();
-
         let receiver = Arc::new(Mutex::new(receiver));
-
         let mut workers = Vec::with_capacity(size);
-
         for id in 0..size{
             workers.push(Worker::new(id, Arc::clone(&receiver)));
         }
@@ -62,7 +58,6 @@ impl Worker {
         let thread = thread::spawn(move||{
             loop {
                 let message = receiver.lock().unwrap().recv().unwrap();
-
                 match message {
                     Message::NewJob(job) => {
                         println!("Worker {} got a job; executing.", id);
@@ -89,7 +84,6 @@ impl Drop for ThreadPool {
             self.sender.send(Message::Terminate).unwrap();
         }
         println!("Shutting down all workers.");
-
         for worker in &mut self.workers{
             println!("Shutting down worker {}", worker.id);
             if let Some(thread) = worker.thread.take(){
